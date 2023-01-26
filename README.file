@@ -1,0 +1,8 @@
+To run backend docker
+
+BUILD
+docker build -t ia-backend .
+
+RUN 
+docker run -it -p 9000:3000 -v $(pwd):/app ia-backend
+
