@@ -73,8 +73,9 @@ async function Update(coll, testId, updateFields)
 }
  
 // private method use to get a doc by id in MongoDB
-async function GetOne(coll, query )
-{   let find = '';
+async function GetOne(coll, _id )
+{   let query = {"_id" : ObjectId(_id)};
+    console.log("query::::::::::::::::::::::" +query);
     try {
         OpenConnection(mongoClient);
         return await mongoClient.db(MONGO_DB_NAME).collection(coll).findOne(query);
@@ -91,7 +92,7 @@ async function GetAll(coll)
 {
     try {
         OpenConnection();
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).find({},{projection: { _id: 0 } }).toArray();
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).find({},{projection: { } }).toArray();
     } catch (error) {
         console.error(error);
     }

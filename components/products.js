@@ -1,83 +1,43 @@
-//const mongoDbClient = require('../controllers/db-controller');
-const response = require('../network/response');
+const mongoDbClient = require('../controllers/db-controller');
 const express = require("express");
 const router = express.Router();
+const {MONGO_DB_PRODUCTS_COLL} = require('../config');
 
 // CREATE product
-router.post("create", (req, res) => {
-	console.log("entroooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo")
-	console.log(req);
-    /*mongoDbClient.create(req.body, (error, data) => {
-	if (error) {
-	return next(error);
-	} else {
-	console.log(data);
-	res.json(data);
-	}
-
-});*/
-response.success(req, res, data, 200);
+router.post("/create", async function(req, res) {
+    mongoDbClient.Create(MONGO_DB_PRODUCTS_COLL, req.body).then((resp)=>{
+		console.log(MONGO_DB_PRODUCTS_COLL);
+		res.json(resp);
+	}).catch((err=>{
+		res.json(req,res,err.message,500,err.stack);
+	}));
 
 });
-/*
-// READ Students
-router.get("/", (req, res) => {
-studentSchema.find((error, data) => {
-	if (error) {
-	return next(error);
-	} else {
-	res.json(data);
-	}
-});
+router.get("/list", async function(req, res) {
+    mongoDbClient.GetAll(MONGO_DB_PRODUCTS_COLL, req.body).then((resp)=>{
+		res.json(resp);
+	}).catch((err=>{
+		res.json(req,res,err.message,500,err.stack);
+	}));
+
 });
 
-// UPDATE student
-router
-.route("/update-student/:id")
-// Get Single Student
-.get((req, res) => {
-	studentSchema.findById(
-		req.params.id, (error, data) => {
-	if (error) {
-		return next(error);
-	} else {
-		res.json(data);
-	}
-	});
-})
+router.delete("/delete/:id", async function(req, res) {
+    mongoDbClient.Delete(MONGO_DB_PRODUCTS_COLL, req.params.id).then((resp)=>{
+		res.json(resp);
+	}).catch((err=>{
+		res.json(req,res,err.message,500,err.stack);
+	}));
 
-// Update Student Data
-.put((req, res, next) => {
-	studentSchema.findByIdAndUpdate(
-	req.params.id,
-	{
-		$set: req.body,
-	},
-	(error, data) => {
-		if (error) {
-		return next(error);
-		console.log(error);
-		} else {
-		res.json(data);
-		console.log("Student updated successfully !");
-		}
-	}
-	);
 });
 
-// Delete Student
-router.delete("/delete-student/:id",
-(req, res, next) => {
-studentSchema.findByIdAndRemove(
-	req.params.id, (error, data) => {
-	if (error) {
-	return next(error);
-	} else {
-	res.status(200).json({
-		msg: data,
-	});
-	}
+router.get("/edit/:id", async function(req, res) {
+    mongoDbClient.GetOne(MONGO_DB_PRODUCTS_COLL, req.params.id).then((resp)=>{
+		res.json(resp);
+	}).catch((err=>{
+		res.json(req,res,err.message,500,err.stack);
+	}));
+
 });
-});*/
 
 module.exports = router;
