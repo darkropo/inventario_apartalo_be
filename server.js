@@ -1,6 +1,7 @@
 let express = require('express');
 let cors = require('cors');
 let bodyParser = require('body-parser');
+const {PORT} = require('./config');
 
 // Express Route
 const routes = require('./network/routes')
@@ -15,9 +16,8 @@ routes(app);
 
 
 // PORT
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-console.log('Connected to port ' + port)
+app.listen(PORT, () => {
+console.log('Connected to port ' + PORT)
 })
 
 // 404 Error

@@ -1,5 +1,5 @@
 
-const products = require('../components/products');
+const products = require('../components/products.js');
 const route = "/apartalo/inventario"
 
 const routes = function(server){
