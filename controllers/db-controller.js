@@ -44,6 +44,22 @@ async function Create(coll, query)
     }    
 }
  
+// private method use to save a new Doc in MongoDB
+async function CreateMany(coll, query)
+{
+    let insert = "";
+    try {
+        OpenConnection(mongoClient);
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).insertMany(query);
+    } catch (error) {
+        //console.log("Hubo un problema con bd");
+        console.error(error);
+    }
+    finally{
+        CloseConnection(mongoClient);
+    }    
+}
+ 
 // private method use to delete a doc in MongoDB
 async function Delete(coll, eraseInput)
 {
@@ -75,7 +91,18 @@ async function Update(coll, testId, updateFields)
 // private method use to get a doc by id in MongoDB
 async function GetOne(coll, _id )
 {   let query = {"_id" : ObjectId(_id)};
-    console.log("query::::::::::::::::::::::" +query);
+    try {
+        OpenConnection(mongoClient);
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).findOne(query);
+    } catch (error) {
+        console.error(error);
+    }
+    finally{
+        CloseConnection(mongoClient);
+    }    
+}
+async function GetById(coll, query )
+{ 
     try {
         OpenConnection(mongoClient);
         return await mongoClient.db(MONGO_DB_NAME).collection(coll).findOne(query);
@@ -88,11 +115,11 @@ async function GetOne(coll, _id )
 }
  
 // private method use to get all docs from a collection in MongoDB
-async function GetAll(coll)
+async function GetAll(coll, query = {})
 {
     try {
         OpenConnection();
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).find({},{projection: { } }).toArray();
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).find(query,{projection: { } }).toArray();
     } catch (error) {
         console.error(error);
     }
@@ -101,4 +128,4 @@ async function GetAll(coll)
     }    
 }
 
-module.exports = { Create, Delete, Update, isObject, GetOne, GetAll };
+module.exports = { Create, CreateMany, Delete, Update, isObject, GetOne, GetAll, GetById };
