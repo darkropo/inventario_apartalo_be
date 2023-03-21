@@ -6,7 +6,6 @@ const {MONGO_DB_PRODUCTS_COLL} = require('../config');
 // CREATE product
 router.post("/create", async function(req, res) {
     mongoDbClient.Create(MONGO_DB_PRODUCTS_COLL, req.body).then((resp)=>{
-		console.log(MONGO_DB_PRODUCTS_COLL);
 		res.json(resp);
 	}).catch((err=>{
 		res.json(req,res,err.message,500,err.stack);
