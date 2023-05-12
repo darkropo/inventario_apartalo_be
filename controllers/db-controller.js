@@ -61,11 +61,11 @@ async function CreateMany(coll, query)
 }
  
 // private method use to delete a doc in MongoDB
-async function Delete(coll, eraseInput)
+async function Delete(coll, id)
 {
     try {
         OpenConnection(mongoClient);
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).deleteOne({ _id:eraseInput });
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).deleteOne({ _id:ObjectId(id) });
     } catch (error) {
         console.error(error);
     }
@@ -75,11 +75,11 @@ async function Delete(coll, eraseInput)
 }
  
 // private method use to update a Document in MongoDB
-async function Update(coll, testId, updateFields)
-{
+async function Update(coll, id, updateFields)
+{ console.log("bd::::::::::::::::::::::::", id);
     try {
         OpenConnection(mongoClient);
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).updateMany({ _id: testId }, { $set: updateFields});
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).updateMany({ _id: ObjectId(id) }, { $set: updateFields});
     } catch (error) {
         console.error(error);
     }
@@ -89,11 +89,11 @@ async function Update(coll, testId, updateFields)
 }
  
 // private method use to get a doc by id in MongoDB
-async function GetOne(coll, _id )
-{   let query = {"_id" : ObjectId(_id)};
+async function GetOne(coll, query ,qProjection = {})
+{   
     try {
         OpenConnection(mongoClient);
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).findOne(query);
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).findOne(query, {projection: qProjection});
     } catch (error) {
         console.error(error);
     }
@@ -115,11 +115,11 @@ async function GetById(coll, query )
 }
  
 // private method use to get all docs from a collection in MongoDB
-async function GetAll(coll, query = {})
+async function GetAll(coll, query = {}, qProjection = {})
 {
     try {
         OpenConnection();
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).find(query,{projection: { } }).toArray();
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).find(query,{projection: qProjection }).toArray();
     } catch (error) {
         console.error(error);
     }

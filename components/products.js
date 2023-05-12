@@ -37,6 +37,15 @@ router.get("/edit/:id", async function(req, res) {
 		res.json(req,res,err.message,500,err.stack);
 	}));
 
+router.put("/edit/:id", async function(req, res) {
+	mongoDbClient.Update(MONGO_DB_PRODUCTS_COLL, req.params.id, req.body).then((resp)=>{
+		res.json(resp);
+	}).catch((err=>{
+		res.json(req,res,err.message,500,err.stack);
+	}));
+
+});
+
 });
 
 module.exports = router;
