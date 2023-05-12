@@ -24,6 +24,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-docker-compose.yml
-.env
-.env.dev
+docker-compose.yml*
+.env*
+.env.dev*
+mongodb://rnoguera:Renm-16151662@54.233.123.190:27017/?authMechanism=DEFAULT
+package-lock.json
