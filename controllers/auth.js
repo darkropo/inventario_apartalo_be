@@ -1,3 +1,4 @@
+//AUTH MIDDLEWARE
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
@@ -38,8 +39,9 @@ passport.use(new LocalStrategy(
 // Serialize and deserialize the user to allow sessions
 passport.serializeUser((user, done) => done(null, user.username));
 
-passport.deserializeUser((username, done) => {
+passport.deserializeUser(async (username, done) => {
   try {
+    const users = await mongoDbClient.GetAll(MONGO_DB_USERS_COLL, {});
     const user = users.find(user => user.username === username);
     return done(null, user);
   } catch (error) {
@@ -59,7 +61,7 @@ const addUserWithRole = async (username, password, role) => {
       return { error: `User ${username} already exists in the database` }; 
     }
 
-    const queryRole = { name: role };
+    const queryRole = { _id: role };
     const existingRole = await mongoDbClient.GetOne(MONGO_DB_ROLES_COLL, queryRole, { _id: 1 });
     if (!existingRole) {
       console.log(`Role ${role} does not exist`); 

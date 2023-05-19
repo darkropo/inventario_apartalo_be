@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const router = express.Router();
+const { ObjectId } = require('mongodb');
 const { passport, authenticateMiddleware, addUserWithRole, hasRole } = require('../controllers/auth');
 const mongoDbClient = require('../controllers/db-controller');
 const { MONGO_DB_USERS_COLL, MONGO_DB_ROLES_COLL, SESSION_SECRET_KEY } = require('../config');
@@ -22,7 +23,7 @@ router.use(passport.session());
 router.post('/login', async (req, res, next) => {
   passport.authenticate('local', async (err, user, info) => {
     try {
-
+console.log("user::::::::::", user);
       if (err || !user) {
         const message = err ? err.message : 'Invalid username or password';
         return res.status(401).send({ message });
@@ -52,20 +53,49 @@ router.post('/login', async (req, res, next) => {
 
 // Logout route
 router.get('/logout', authenticateMiddleware, async (req, res) => {
-  req.logout();
-  res.status(200).json({ success: true, message: 'Logged out successfully!' });
+  req.logout(function(error){
+    if(error) {
+      return res.status(500).json({ message: "Error logging out" });
+    }
+    res.status(200).json({ message: "Logout successful" });
+  });
 });
 
 // Create user route
-router.post('/create', async (req, res) => {
+router.post('/user',authenticateMiddleware, hasRole("admin"), async (req, res) => {
   try {
-    const insertUser = await addUserWithRole(req.body.username, req.body.password, req.body.role);
+    const insertUser = await addUserWithRole(req.body.username, req.body.password, ObjectId(req.body.role));
     res.json(insertUser);
     //res.status(201).json({ message: 'User created successfully!' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
   }
+});
+// Get all users route
+router.get('/user', authenticateMiddleware,hasRole("admin"), async (req, res) => {
+  try {
+    const users = await mongoDbClient.GetAll(MONGO_DB_USERS_COLL, {},  {}, lookup = { from: 'roles', localField: 'role', foreignField: '_id', as: 'role_name' });
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+});
+//edit User
+router.put("/user/:id", authenticateMiddleware, hasRole("admin"), async function(req, res) {
+  const query = {
+    username: req.body.username,
+    password: req.body.password,
+    role: ObjectId(req.body.role)
+  };
+  console.log("query::::::::::::::::::::::::::::::::::::::::", query);
+	mongoDbClient.Update(MONGO_DB_USERS_COLL, req.params.id, query).then((resp)=>{
+		res.json(resp);
+	}).catch((err=>{
+		res.json(req,res,err.message,500,err.stack);
+	}));
+
 });
 
 // Create role route
