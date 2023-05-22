@@ -26,5 +26,5 @@ yarn-debug.log*
 yarn-error.log*
 docker-compose.yml*
 .env
-.env.dev
+.dev.env
 package-lock.json
