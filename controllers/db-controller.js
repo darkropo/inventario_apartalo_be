@@ -19,9 +19,9 @@ function isObject(obj) {
 
   async function OpenConnection() {
     try {
-        const isConnected = mongoClient.topology.isConnected();
+         
         // Check if there is already an open connection
-        if (!mongoClient || !isConnected) {
+        if (!mongoClient || !mongoClient.topology || !mongoClient.topology.isConnected()) {
             // If there isn't, establish a new connection
             mongoClient = await MongoClient.connect(MONGO_URI, clientOptions);
         }
@@ -35,11 +35,11 @@ function isObject(obj) {
 // private method use to close the database connection
 async function CloseConnection() {
     try {
-      const isConnected = mongoClient.topology.isConnected();
+       
       // Decrement the number of outstanding operations
       numOperations--;
       console.log(`Number of outstanding operations: ${numOperations}`);
-      if (numOperations === 0 && mongoClient && isConnected) {
+      if (numOperations === 0 && mongoClient && mongoClient.topology.isConnected()) {
         // If there are no more outstanding operations, close the connection
         await mongoClient.close();
       }
