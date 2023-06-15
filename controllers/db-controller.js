@@ -89,7 +89,7 @@ async function Delete(coll, id)
     try {
         numOperations++;
         await OpenConnection();
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).deleteOne({ _id:ObjectId(id) });
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).deleteOne({ _id:id });
     } catch (error) {
         console.error(error);
     }
@@ -104,7 +104,7 @@ async function Update(coll, id, updateFields)
     try {
         numOperations++;
         await OpenConnection();
-        return await mongoClient.db(MONGO_DB_NAME).collection(coll).updateMany({ _id: ObjectId(id) }, { $set: updateFields});
+        return await mongoClient.db(MONGO_DB_NAME).collection(coll).updateMany({ _id: id }, { $set: updateFields});
     } catch (error) {
         console.error(error);
     }
