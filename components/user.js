@@ -89,8 +89,7 @@ router.put("/user/:id", authenticateMiddleware, hasRole("admin"), async function
     password: req.body.password,
     role: ObjectId(req.body.role)
   };
-  console.log("query::::::::::::::::::::::::::::::::::::::::", query);
-	mongoDbClient.Update(MONGO_DB_USERS_COLL, req.params.id, query).then((resp)=>{
+	mongoDbClient.Update(MONGO_DB_USERS_COLL, ObjectId(req.params.id), query).then((resp)=>{
 		res.json(resp);
 	}).catch((err=>{
 		res.json(req,res,err.message,500,err.stack);
@@ -136,7 +135,7 @@ router.put("/role/:id", authenticateMiddleware, hasRole("admin"), async function
     description: req.body.description
   };
   console.log("query::::::::::::::::::::::::::::::::::::::::", query);
-	mongoDbClient.Update(MONGO_DB_ROLES_COLL, req.params.id, query).then((resp)=>{
+	mongoDbClient.Update(MONGO_DB_ROLES_COLL, ObjectId(req.params.id), query).then((resp)=>{
 		res.json(resp);
 	}).catch((err=>{
 		res.json(req,res,err.message,500,err.stack);
@@ -145,7 +144,7 @@ router.put("/role/:id", authenticateMiddleware, hasRole("admin"), async function
 });
 //Delete role
 router.delete("/role/:id", authenticateMiddleware, hasRole("admin"), async function(req, res) {
-  mongoDbClient.Delete(MONGO_DB_ROLES_COLL, req.params.id).then((resp)=>{
+  mongoDbClient.Delete(MONGO_DB_ROLES_COLL, ObjectId(req.params.id)).then((resp)=>{
   res.json(resp);
 }).catch((err=>{
   res.json(req,res,err.message,500,err.stack);
