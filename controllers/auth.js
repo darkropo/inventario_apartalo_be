@@ -78,8 +78,8 @@ const addUserWithRole = async (username, password, role) => {
 };
 
 // Function to check if user has the specified role
-const hasRole = (role) => (req, res, next) => {
-  if (!req.isAuthenticated() || req.user.role !== role) {
+const hasRole = (roles) => (req, res, next) => {
+  if (!req.isAuthenticated() || !roles.includes(req.user.role)) {
     return res.status(401).send({ message: 'Unauthorized' });
   }
   return next();
